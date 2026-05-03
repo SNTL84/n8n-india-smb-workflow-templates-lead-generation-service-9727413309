@@ -1,0 +1,61 @@
+{
+  "name": "WhatsApp Lead Capture",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook — Form Submission",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "to": "={{ $json.phone }}",
+        "type": "text",
+        "text": {
+          "body": "Namaste {{ $json.name }}! 🙏 We've received your enquiry about {{ $json.service }}. Our team will contact you within 2 hours. — desidevloper.com"
+        }
+      },
+      "id": "whatsapp-send",
+      "name": "Send WhatsApp Acknowledgement",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "sheetId": "YOUR_GOOGLE_SHEET_ID",
+        "range": "Leads!A:E",
+        "options": {},
+        "dataMode": "autoMapInputData"
+      },
+      "id": "sheets-log",
+      "name": "Log to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [750, 300]
+    }
+  ],
+  "connections": {
+    "Webhook — Form Submission": {
+      "main": [[{"node": "Send WhatsApp Acknowledgement", "type": "main", "index": 0}]]
+    },
+    "Send WhatsApp Acknowledgement": {
+      "main": [[{"node": "Log to Google Sheets", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "staticData": null,
+  "meta": {
+    "description": "Capture form lead → send instant WhatsApp acknowledgement → log to Google Sheets. Built for Indian SMBs by SNTL84. Replace YOUR_GOOGLE_SHEET_ID with your sheet ID."
+  }
+}

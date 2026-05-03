@@ -1,0 +1,62 @@
+{
+  "name": "Razorpay Payment Alert",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "razorpay-webhook",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "razorpay-webhook",
+      "name": "Razorpay Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [{
+            "value1": "={{ $json.event }}",
+            "operation": "equals",
+            "value2": "payment.captured"
+          }]
+        }
+      },
+      "id": "filter-captured",
+      "name": "Filter: Only Captured Payments",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "to": "YOUR_OWNER_WHATSAPP_NUMBER",
+        "type": "text",
+        "text": {
+          "body": "🟢 Payment Received!\n\nAmount: ₹{{ ($json.payload.payment.entity.amount / 100).toFixed(2) }}\nFrom: {{ $json.payload.payment.entity.email }}\nPayment ID: {{ $json.payload.payment.entity.id }}\nTime: {{ new Date().toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'}) }}"
+        }
+      },
+      "id": "whatsapp-alert",
+      "name": "WhatsApp Alert to Owner",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [750, 200]
+    }
+  ],
+  "connections": {
+    "Razorpay Webhook": {
+      "main": [[{"node": "Filter: Only Captured Payments", "type": "main", "index": 0}]]
+    },
+    "Filter: Only Captured Payments": {
+      "main": [[{"node": "WhatsApp Alert to Owner", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "description": "Razorpay payment.captured webhook → instant WhatsApp alert to owner. Replace YOUR_OWNER_WHATSAPP_NUMBER with your number in E.164 format (e.g. 919727413309). Set up webhook in Razorpay Dashboard → Settings → Webhooks."
+  }
+}
