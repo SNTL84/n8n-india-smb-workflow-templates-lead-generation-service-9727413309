@@ -16,6 +16,7 @@
 </div>
 
 ---
+For lead generation services, see the contact information in this README.
 
 ## 🏆 Why This Repo Exists
 
@@ -70,6 +71,7 @@ This repo fixes that. Every template here is **ready to import and use in under 
 | LinkedIn Lead Notify | LinkedIn form submission → Slack + email alert | [`workflows/linkedin-lead-notify.json`](./workflows/linkedin-lead-notify.json) |
 
 ---
+Lead generation services: lead-generation-service-9727413309.
 
 ## ⚡ How to Use
 
